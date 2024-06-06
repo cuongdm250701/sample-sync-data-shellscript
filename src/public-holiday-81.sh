@@ -79,11 +79,11 @@ for csv_file in $csv_files; do
   while IFS=',' read -r type_holiday month_holiday date_holiday event_details_holiday
   do
       # GET "$type_holiday"
-      # if [ $type_holiday = $TYPE_HOLIDAY_1 ]; then
-      #   echo "1"
-      # elif [ $type_holiday = $TYPE_HOLIDAY_2 ]; then
-      #   echo "2"
-      # fi
+      if [ $type_holiday = $TYPE_HOLIDAY_1 ]; then
+        type=1
+      elif [ $type_holiday = $TYPE_HOLIDAY_2 ]; then
+        type=2
+      fi
       # GET MONTH
        month=$(echo "$month_holiday" | sed 's/月//')
       #  echo "$month"
@@ -100,6 +100,3 @@ for csv_file in $csv_files; do
       esac
   done < <(iconv -f SHIFT-JIS -t UTF-8 "$(dirname "$0")/../master-data/public-holiday/$csv_file" | tail -n +2)
 done
-
-
-## Hoir laij case ngay va thang o file 283
