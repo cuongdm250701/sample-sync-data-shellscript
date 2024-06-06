@@ -1,6 +1,6 @@
 #!/bin/bash
-# source $(dirname "$0")/../connect-db.sh
-# connection_db
+source $(dirname "$0")/../connect-db.sh
+connection_db
 
 getDate() {
   local year=$1
@@ -18,48 +18,18 @@ getDate() {
   echo "$target_date"
 }
 
-# Run function
-year=2024
-month=10
-target_day=1
-target_week=2
+# Test function
+# year=2025
+# month=1
+# target_day=1
+# target_week=2
 
-get_date=$(getDate $year $month $target_day $target_week)
-echo "$get_date"
+# get_date=$(getDate $year $month $target_day $target_week)
+# echo "$get_date"
 
-
-
-
-# holiday='祝日'
-# while IFS=',' read -r col1 col2 col3 col4
-  # do
-    ####### Handle get type holiday #######
-    # if [ $col1 = $holiday ]; then
-    #   echo "1"
-    # else
-    #   echo "2"
-    # fi
-
-    ###### Handle get month #########
-    # month=$(echo "$col2" | sed 's/月//')
-    # echo "$month"
-
-    ##### Handle get day ######
-
-# done < <(tail -n +2 "$(dirname "$0")/../master-data/public-holiday/171_MD1.csv" | iconv -f SHIFT-JIS -t UTF-8)
-
-
-######################### SWITCH CASE ################################
-############ Use for generate date holiday ####################
-# fruit = "kiwi"
-# case $"fruit" in "apple") echo "apple is tasty";;
-# "banana") echo "I like banana";;
-# "kiwi") echo "Newzeland is famous for kiwi";;
-# *)
-# echo "default case";;
-# esac
 
 ### DOING ###
+current_year=$(date +'%Y')
 ### Type holiday ###
 TYPE_HOLIDAY_1='祝日'
 TYPE_HOLIDAY_2='行事'
@@ -68,7 +38,7 @@ TABLE_NAME='public_holiday'
 ### List columns in database's table ###
 columns="id,type,date,month,year,event_details,holiday,store_code,created_at,updated_at"
 ### Create file contain store's list data monthly ### 
-path="$(dirname "$0")/../output/public-holiday/test.csv"
+path="$(dirname "$0")/../output/public-holiday.csv"
 echo "${columns}" > "${path}"
 ### Handle get data ###
 csv_files=$(ls $(dirname "$0")/../master-data/public-holiday/)
@@ -89,14 +59,16 @@ for csv_file in $csv_files; do
       #  echo "$month"
       # GET DATE
       case "${date_holiday}_${month_holiday}" in 
-        "第２月曜日_１月") echo "thứ 2 tuần thứ 2 tháng 1";;
-        "第２日曜日_５月") echo "chủ nhật tuần thứ 2 tháng 5";;
-        "第３日曜日_６月") echo "chủ nhật tuần thứ 3 tháng 6";;
-        "第３月曜日_７月") echo "thứ 2 tuần thứ 3 tháng 7";;
-        "第３月曜日_９月") echo "thứ 2 tuần thứ 3 tháng 9";;
-        "第２月曜日_１０月") echo "thứ 2 tuần thứ 2 tháng 10";;
+        "第２月曜日_１月") date=$(getDate $current_year 1 1 2);; # echo "thứ 2 tuần thứ 2 tháng 1"
+        "第２日曜日_５月") date=$(getDate $current_year 5 0 2);; # echo "chủ nhật tuần thứ 2 tháng 5"
+        "第３日曜日_６月") date=$(getDate $current_year 6 0 3);; # echo "chủ nhật tuần thứ 3 tháng 6"
+        "第３月曜日_７月") date=$(getDate $current_year 7 1 3);; # echo "thứ 2 tuần thứ 3 tháng 7"
+        "第３月曜日_９月") date=$(getDate $current_year 9 1 3);; # echo "thứ 2 tuần thứ 3 tháng 9"
+        "第２月曜日_１０月") date=$(getDate $current_year 10 1 2);; # echo "thứ 2 tuần thứ 2 tháng 10"
         *)
         echo "$date_holiday" | sed 's/日//';;
       esac
+      ## Hanlde Synthetic data write to csv
+      ## doing something ....##
   done < <(iconv -f SHIFT-JIS -t UTF-8 "$(dirname "$0")/../master-data/public-holiday/$csv_file" | tail -n +2)
 done
